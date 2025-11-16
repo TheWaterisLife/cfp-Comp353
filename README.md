@@ -35,9 +35,17 @@ The project is implemented with modern, readable PHP (procedural or simple MVC),
 - `db/` — schema and seed SQL scripts
 - `src/` — PHP source (public webroot, includes, and role-specific modules)
 - `assets/` — CSS, JS, and images
-- `docs/` — ERD, design notes, demo script, reports, screenshots
-- `scripts/` — helper scripts (e.g., packaging, stats) *(added in later phases)*
+- `docs/` — ERD, design notes, demo script, tests, reports, screenshots
+- `scripts/` — helper scripts (e.g., stats aggregation, packaging)
 
-See `INSTALL.md` for setup instructions and `docs/design_notes.md` for database and workflow design details (to be expanded in later phases).
+### Branching model
 
+- `main` — stable branch containing accepted phases.
+- `phaseN-*` — feature branches per phase (e.g., `phase1-erd`, `phase3-auth`, `phase7-final`), each with its own PR and progress notes.
+
+### Getting started
+
+- See `INSTALL.md` for setup instructions.
+- See `docs/demo_script.md` for a suggested 25-minute walkthrough.
+- See `docs/design_notes.md` for schema and workflow details (including normalization and plagiarism handling).
 
