@@ -76,7 +76,7 @@ $members = $pdo->query("
     <div class="top-bar">
         <h1>Admin · Members</h1>
         <div>
-            <a href="/index.php">← Home</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">← Home</a>
         </div>
     </div>
 
@@ -125,7 +125,7 @@ $members = $pdo->query("
                 </td>
                 <td>
                         <button type="submit">Save</button>
-                        <a href="/admin/members.php?action=deactivate&amp;id=<?php echo (int)$m['id']; ?>" style="margin-left:0.4rem; font-size:0.8rem;" onclick="return confirm('Deactivate this member?');">
+                        <a href="<?php echo cfp_url('admin/members.php?action=deactivate&amp;id=' . (int)$m['id']); ?>" style="margin-left:0.4rem; font-size:0.8rem;" onclick="return confirm('Deactivate this member?');">
                             Deactivate
                         </a>
                     </form>

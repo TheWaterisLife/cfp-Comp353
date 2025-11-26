@@ -80,19 +80,19 @@ $blacklistedAuthors = $blacklistedAuthorsStmt->fetchAll();
     <meta charset="UTF-8">
     <title>Moderator · Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
 </head>
 <body class="cfp-shell">
 <header class="cfp-header">
     <div class="cfp-header-inner">
-        <div class="cfp-logo"><a href="/index.php">CopyForward Publishing</a></div>
+        <div class="cfp-logo"><a href="<?php echo cfp_url('index.php'); ?>">CopyForward Publishing</a></div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
         </nav>
         <div style="font-size:0.8rem;">
             <?php echo e($user['name']); ?> (moderator)
             &nbsp;·&nbsp;
-            <a href="/logout.php">Logout</a>
+            <a href="<?php echo cfp_url('logout.php'); ?>">Logout</a>
         </div>
     </div>
 </header>
@@ -131,7 +131,7 @@ $blacklistedAuthors = $blacklistedAuthorsStmt->fetchAll();
                             </tbody>
                         </table>
                         <p style="margin-top:0.5rem; font-size:0.8rem;">
-                            <a href="/moderator/approve_item.php">Go to approvals →</a>
+                            <a href="<?php echo cfp_url('moderator/approve_item.php'); ?>">Go to approvals →</a>
                         </p>
                     <?php endif; ?>
                 </div>
@@ -161,7 +161,7 @@ $blacklistedAuthors = $blacklistedAuthorsStmt->fetchAll();
                             </tbody>
                         </table>
                         <p style="margin-top:0.5rem; font-size:0.8rem;">
-                            <a href="/moderator/plagiarism_report.php">Open new plagiarism report →</a>
+                            <a href="<?php echo cfp_url('moderator/plagiarism_report.php'); ?>">Open new plagiarism report →</a>
                         </p>
                     <?php endif; ?>
                 </div>

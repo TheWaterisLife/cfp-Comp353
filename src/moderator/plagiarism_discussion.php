@@ -67,14 +67,14 @@ $votes = $votesStmt->fetchAll();
     <meta charset="UTF-8">
     <title>Plagiarism discussion · CFP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
 </head>
 <body class="cfp-shell">
 <header class="cfp-header">
     <div class="cfp-header-inner">
-        <div class="cfp-logo"><a href="/index.php">CopyForward Publishing</a></div>
+        <div class="cfp-logo"><a href="<?php echo cfp_url('index.php'); ?>">CopyForward Publishing</a></div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
         </nav>
     </div>
 </header>
@@ -123,7 +123,7 @@ $votes = $votesStmt->fetchAll();
             </div>
 
             <p style="margin-top:1rem; font-size:0.85rem;">
-                <a href="/moderator/plagiarism_vote.php?discussion_id=<?php echo (int)$discussionId; ?>">Go to voting page →</a>
+                <a href="<?php echo cfp_url('moderator/plagiarism_vote.php?discussion_id=' . (int)$discussionId); ?>">Go to voting page →</a>
             </p>
         </section>
     </div>

@@ -86,7 +86,7 @@ $charities = $pdo->query('SELECT * FROM charities ORDER BY name')->fetchAll();
     <div class="top-bar">
         <h1>Admin · Charities</h1>
         <div>
-            <a href="/index.php">← Home</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">← Home</a>
         </div>
     </div>
 
@@ -108,9 +108,9 @@ $charities = $pdo->query('SELECT * FROM charities ORDER BY name')->fetchAll();
                     <td><?php echo e($c['name']); ?></td>
                     <td><?php echo $c['website'] ? '<a href="'.e($c['website']).'" target="_blank">'.e($c['website']).'</a>' : '-'; ?></td>
                     <td>
-                        <a href="/admin/charities.php?action=edit&amp;id=<?php echo (int)$c['id']; ?>">Edit</a>
+                        <a href="<?php echo cfp_url('admin/charities.php?action=edit&amp;id=' . (int)$c['id']); ?>">Edit</a>
                         &nbsp;·&nbsp;
-                        <a href="/admin/charities.php?action=delete&amp;id=<?php echo (int)$c['id']; ?>" onclick="return confirm('Delete this charity?');">Delete</a>
+                        <a href="<?php echo cfp_url('admin/charities.php?action=delete&amp;id=' . (int)$c['id']); ?>" onclick="return confirm('Delete this charity?');">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -138,7 +138,7 @@ $charities = $pdo->query('SELECT * FROM charities ORDER BY name')->fetchAll();
             <div style="margin-top:0.8rem;">
                 <button type="submit"><?php echo $editCharity ? 'Update charity' : 'Create charity'; ?></button>
                 <?php if ($editCharity): ?>
-                    <a href="/admin/charities.php" style="margin-left:0.5rem; font-size:0.85rem;">Cancel</a>
+                    <a href="<?php echo cfp_url('admin/charities.php'); ?>" style="margin-left:0.5rem; font-size:0.85rem;">Cancel</a>
                 <?php endif; ?>
             </div>
         </form>

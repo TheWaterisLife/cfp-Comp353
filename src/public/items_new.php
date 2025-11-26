@@ -27,15 +27,15 @@ $items = $stmt->fetchAll();
     <meta charset="UTF-8">
     <title>New items · CFP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
 </head>
 <body class="cfp-shell">
 <header class="cfp-header">
     <div class="cfp-header-inner">
-        <div class="cfp-logo"><a href="/index.php">CopyForward Publishing</a></div>
+        <div class="cfp-logo"><a href="<?php echo cfp_url('index.php'); ?>">CopyForward Publishing</a></div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
-            <a href="/search.php">Search</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
+            <a href="<?php echo cfp_url('search.php'); ?>">Search</a>
         </nav>
     </div>
 </header>
@@ -52,7 +52,7 @@ $items = $stmt->fetchAll();
                     <?php foreach ($items as $item): ?>
                         <article class="cfp-panel" style="padding:0.8rem 1rem; box-shadow:none;">
                             <h2 style="margin:0 0 0.25rem; font-size:1rem;">
-                                <a href="/item.php?id=<?php echo (int)$item['id']; ?>"><?php echo e($item['title']); ?></a>
+                                <a href="<?php echo cfp_url('item.php?id=' . (int)$item['id']); ?>"><?php echo e($item['title']); ?></a>
                             </h2>
                             <p class="cfp-muted" style="margin:0 0 0.25rem; font-size:0.85rem;">
                                 by <?php echo e($item['author_name']); ?> · uploaded <?php echo e($item['upload_date']); ?>
@@ -61,8 +61,8 @@ $items = $stmt->fetchAll();
                                 <?php echo e(mb_strimwidth($item['description'] ?? '', 0, 140, '…')); ?>
                             </p>
                             <div style="display:flex; gap:0.5rem; margin-top:0.35rem;">
-                                <a class="cfp-btn cfp-btn-outline" href="/item.php?id=<?php echo (int)$item['id']; ?>">View details</a>
-                                <a class="cfp-btn cfp-btn-primary" href="/member/download.php?item_id=<?php echo (int)$item['id']; ?>">Download</a>
+                                <a class="cfp-btn cfp-btn-outline" href="<?php echo cfp_url('item.php?id=' . (int)$item['id']); ?>">View details</a>
+                                <a class="cfp-btn cfp-btn-primary" href="<?php echo cfp_url('member/download.php?item_id=' . (int)$item['id']); ?>">Download</a>
                             </div>
                         </article>
                     <?php endforeach; ?>

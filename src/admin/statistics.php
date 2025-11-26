@@ -89,15 +89,15 @@ $downloadsByCountry = $countryStmt->fetchAll();
     <meta charset="UTF-8">
     <title>Admin · Statistics</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
 </head>
 <body class="cfp-shell">
 <header class="cfp-header">
     <div class="cfp-header-inner">
-        <div class="cfp-logo"><a href="/index.php">CopyForward Publishing</a></div>
+        <div class="cfp-logo"><a href="<?php echo cfp_url('index.php'); ?>">CopyForward Publishing</a></div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
-            <a href="/admin/members.php">Admin</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
+            <a href="<?php echo cfp_url('admin/members.php'); ?>">Admin</a>
         </nav>
     </div>
 </header>
@@ -131,7 +131,7 @@ $downloadsByCountry = $countryStmt->fetchAll();
                         </tbody>
                     </table>
                     <p style="margin-top:0.5rem; font-size:0.8rem;">
-                        <a href="/admin/export_stats.php?type=items&year=<?php echo (int)$year; ?>">Export CSV</a>
+                        <a href="<?php echo cfp_url('admin/export_stats.php?type=items&year=' . (int)$year); ?>">Export CSV</a>
                     </p>
                 </div>
                 <div>
@@ -151,7 +151,7 @@ $downloadsByCountry = $countryStmt->fetchAll();
                         </tbody>
                     </table>
                     <p style="margin-top:0.5rem; font-size:0.8rem;">
-                        <a href="/admin/export_stats.php?type=authors&year=<?php echo (int)$year; ?>">Export CSV</a>
+                        <a href="<?php echo cfp_url('admin/export_stats.php?type=authors&year=' . (int)$year); ?>">Export CSV</a>
                     </p>
                 </div>
             </div>
@@ -211,7 +211,7 @@ $downloadsByCountry = $countryStmt->fetchAll();
                         </tbody>
                     </table>
                     <p style="margin-top:0.5rem; font-size:0.8rem;">
-                        <a href="/admin/export_stats.php?type=donations&year=<?php echo (int)$year; ?>">Export CSV</a>
+                        <a href="<?php echo cfp_url('admin/export_stats.php?type=donations&year=' . (int)$year); ?>">Export CSV</a>
                     </p>
                 </div>
                 <div>
@@ -241,5 +241,6 @@ $downloadsByCountry = $countryStmt->fetchAll();
 </main>
 </body>
 </html>
+
 
 

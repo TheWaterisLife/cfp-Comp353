@@ -28,4 +28,17 @@ if (!defined('CFP_INCLUDE_DIR')) {
 require_once CFP_INCLUDE_DIR . '/helpers.php';
 require_once CFP_INCLUDE_DIR . '/db.php';
 
+// Compute a base path (URL prefix) so the app can be served from a subdirectory,
+// e.g. http://localhost/cfp/src/public/index.php under MAMP.
+if (!defined('CFP_BASE_PATH')) {
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/') ?: '/';
+    $pos = strpos($scriptDir, '/public');
+    if ($pos !== false) {
+        $base = substr($scriptDir, 0, $pos + strlen('/public'));
+    } else {
+        $base = $scriptDir;
+    }
+    define('CFP_BASE_PATH', rtrim($base, '/') . '/');
+}
+
 

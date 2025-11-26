@@ -64,20 +64,20 @@ $items = $itemsStmt->fetchAll();
     <meta charset="UTF-8">
     <title>Author · My items</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
 </head>
 <body class="cfp-shell">
 <header class="cfp-header">
     <div class="cfp-header-inner">
-        <div class="cfp-logo"><a href="/index.php">CopyForward Publishing</a></div>
+        <div class="cfp-logo"><a href="<?php echo cfp_url('index.php'); ?>">CopyForward Publishing</a></div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
-            <a href="/search.php">Search</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
+            <a href="<?php echo cfp_url('search.php'); ?>">Search</a>
         </nav>
         <div style="font-size:0.8rem;">
             <?php echo e($user['name']); ?> (author)
             &nbsp;·&nbsp;
-            <a href="/logout.php">Logout</a>
+            <a href="<?php echo cfp_url('logout.php'); ?>">Logout</a>
         </div>
     </div>
 </header>
@@ -97,7 +97,7 @@ $items = $itemsStmt->fetchAll();
             <?php endif; ?>
 
             <p style="margin-top:0.75rem; font-size:0.85rem;">
-                <a class="cfp-btn cfp-btn-outline" href="/author/upload_item.php">Upload new item</a>
+                <a class="cfp-btn cfp-btn-outline" href="<?php echo cfp_url('author/upload_item.php'); ?>">Upload new item</a>
             </p>
 
             <table class="cfp-table" style="margin-top:1rem;">

@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Register</button>
     </form>
     <p class="hint">
-        Already registered? <a href="/login.php">Login</a>.
+        Already registered? <a href="<?php echo cfp_url('login.php'); ?>">Login</a>.
     </p>
 </main>
 </body>

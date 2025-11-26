@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </p>
 
     <p style="margin-top:1rem; font-size:0.85rem;">
-        <a href="/index.php">← Back to home</a>
+        <a href="<?php echo cfp_url('index.php'); ?>">← Back to home</a>
     </p>
 </main>
 </body>

@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         When a verification matrix is configured for your account, enter the 3-letter code built from cells (row,column) (1,1), (2,2) and (3,3).
     </p>
     <p class="hint">
-        No account? <a href="/register.php">Register</a>.
+        No account? <a href="<?php echo cfp_url('register.php'); ?>">Register</a>.
     </p>
 </main>
 </body>

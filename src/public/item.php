@@ -123,25 +123,25 @@ if ($id > 0) {
     <meta charset="UTF-8">
     <title><?php echo $item ? e($item['title']) . ' · CFP' : 'Item not found · CFP'; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
     <script src="/assets/js/main.js" defer></script>
 </head>
 <body class="cfp-shell">
 <header class="cfp-header">
     <div class="cfp-header-inner">
-        <div class="cfp-logo"><a href="/index.php">CopyForward Publishing</a></div>
+        <div class="cfp-logo"><a href="<?php echo cfp_url('index.php'); ?>">CopyForward Publishing</a></div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
-            <a href="/search.php">Search</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
+            <a href="<?php echo cfp_url('search.php'); ?>">Search</a>
         </nav>
         <div style="font-size:0.8rem;">
             <?php if (cfp_is_logged_in()): ?>
                 <?php $u = cfp_current_user(); ?>
                 <?php echo e($u['name']); ?> (<?php echo e(cfp_current_role() ?? ''); ?>)
                 &nbsp;·&nbsp;
-                <a href="/logout.php">Logout</a>
+                <a href="<?php echo cfp_url('logout.php'); ?>">Logout</a>
             <?php else: ?>
-                <a href="/login.php">Login</a>
+                <a href="<?php echo cfp_url('login.php'); ?>">Login</a>
             <?php endif; ?>
         </div>
     </div>
@@ -161,8 +161,8 @@ if ($id > 0) {
                     <?php echo nl2br(e($item['description'] ?? '')); ?>
                 </p>
                 <div style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                    <a class="cfp-btn cfp-btn-primary" href="/member/download.php?item_id=<?php echo (int)$item['id']; ?>">Download</a>
-                    <a class="cfp-btn cfp-btn-outline" href="/member/donate.php?item_id=<?php echo (int)$item['id']; ?>">Donate</a>
+                    <a class="cfp-btn cfp-btn-primary" href="<?php echo cfp_url('member/download.php?item_id=' . (int)$item['id']); ?>">Download</a>
+                    <a class="cfp-btn cfp-btn-outline" href="<?php echo cfp_url('member/donate.php?item_id=' . (int)$item['id']); ?>">Donate</a>
                 </div>
 
                 <div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:1.25rem;">
@@ -211,7 +211,7 @@ if ($id > 0) {
                                             Reply publicly
                                         </a>
                                         &nbsp;·&nbsp;
-                                        <a href="/member/messages.php?to=<?php echo urlencode($c['author_email']); ?>&subject=<?php echo urlencode('Regarding your comment on \"' . $item['title'] . '\"'); ?>">
+                                        <a href="<?php echo cfp_url('member/messages.php?to=' . urlencode($c['author_email']) . '&subject=' . urlencode('Regarding your comment on \"' . $item['title'] . '\"')); ?>">
                                             Message privately
                                         </a>
                                     </div>
@@ -257,7 +257,7 @@ if ($id > 0) {
                     </p>
                 <?php else: ?>
                     <p class="cfp-muted" style="margin-top:1rem;">
-                        <a href="/login.php">Log in</a> to post a comment.
+                        <a href="<?php echo cfp_url('login.php'); ?>">Log in</a> to post a comment.
                     </p>
                 <?php endif; ?>
 
@@ -268,7 +268,7 @@ if ($id > 0) {
                             You can help the community by reviewing their other works for potential plagiarism.
                         </p>
                         <a class="cfp-btn cfp-btn-outline"
-                           href="/member/review_blacklisted_author.php?author_id=<?php echo (int)$item['author_id']; ?>"
+                           href="<?php echo cfp_url('member/review_blacklisted_author.php?author_id=' . (int)$item['author_id']); ?>"
                            style="margin-top:0.5rem; font-size:0.85rem;">
                             Review other items by this author
                         </a>

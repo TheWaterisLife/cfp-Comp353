@@ -299,14 +299,14 @@ if ($isAppealsCommittee && $decision === 'no_blacklist' && $isCurrentlyBlacklist
     <meta charset="UTF-8">
     <title>Plagiarism voting · CFP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
 </head>
 <body class="cfp-shell">
 <header class="cfp-header">
     <div class="cfp-header-inner">
-        <div class="cfp-logo"><a href="/index.php">CopyForward Publishing</a></div>
+        <div class="cfp-logo"><a href="<?php echo cfp_url('index.php'); ?>">CopyForward Publishing</a></div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
         </nav>
     </div>
 </header>

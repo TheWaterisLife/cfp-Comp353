@@ -117,7 +117,7 @@ if ($pendingStatusId) {
     <div class="top-bar">
         <h1>Moderator · Pending approvals</h1>
         <div>
-            <a href="/index.php">← Home</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">← Home</a>
         </div>
     </div>
 

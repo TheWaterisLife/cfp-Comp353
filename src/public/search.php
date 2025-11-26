@@ -35,7 +35,7 @@ if ($q !== '') {
     <meta charset="UTF-8">
     <title>Search · CFP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
     <script src="/assets/js/main.js" defer></script>
 </head>
 <body class="cfp-shell">
@@ -43,19 +43,19 @@ if ($q !== '') {
     <div class="cfp-header-inner">
         <div class="cfp-logo">CopyForward Publishing</div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
-            <a href="/search.php">Search</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
+            <a href="<?php echo cfp_url('search.php'); ?>">Search</a>
         </nav>
         <div style="font-size:0.8rem;">
             <?php if (cfp_is_logged_in()): ?>
                 <?php $u = cfp_current_user(); ?>
                 <?php echo e($u['name']); ?> (<?php echo e(cfp_current_role() ?? ''); ?>)
                 &nbsp;·&nbsp;
-                <a href="/logout.php">Logout</a>
+                <a href="<?php echo cfp_url('logout.php'); ?>">Logout</a>
             <?php else: ?>
-                <a href="/login.php">Login</a>
+                <a href="<?php echo cfp_url('login.php'); ?>">Login</a>
                 &nbsp;·&nbsp;
-                <a href="/register.php">Register</a>
+                <a href="<?php echo cfp_url('register.php'); ?>">Register</a>
             <?php endif; ?>
         </div>
     </div>
@@ -84,7 +84,7 @@ if ($q !== '') {
                         <?php foreach ($results as $item): ?>
                             <article class="cfp-panel" style="padding:0.8rem 1rem; box-shadow:none;">
                                 <h3 style="margin:0 0 0.2rem; font-size:1rem;">
-                                    <a href="/item.php?id=<?php echo (int)$item['id']; ?>"><?php echo e($item['title']); ?></a>
+                                    <a href="<?php echo cfp_url('item.php?id=' . (int)$item['id']); ?>"><?php echo e($item['title']); ?></a>
                                 </h3>
                                 <p class="cfp-muted" style="margin:0 0 0.25rem;">
                                     by <?php echo e($item['author_name']); ?>
@@ -93,8 +93,8 @@ if ($q !== '') {
                                     <?php echo e(mb_strimwidth($item['description'] ?? '', 0, 140, '…')); ?>
                                 </p>
                                 <div style="display:flex; gap:0.5rem; margin-top:0.35rem;">
-                                    <a class="cfp-btn cfp-btn-outline" href="/item.php?id=<?php echo (int)$item['id']; ?>">View details</a>
-                                    <a class="cfp-btn cfp-btn-primary" href="/member/download.php?item_id=<?php echo (int)$item['id']; ?>">Download</a>
+                                    <a class="cfp-btn cfp-btn-outline" href="<?php echo cfp_url('item.php?id=' . (int)$item['id']); ?>">View details</a>
+                                    <a class="cfp-btn cfp-btn-primary" href="<?php echo cfp_url('member/download.php?item_id=' . (int)$item['id']); ?>">Download</a>
                                 </div>
                             </article>
                         <?php endforeach; ?>

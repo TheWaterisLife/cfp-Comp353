@@ -63,7 +63,7 @@ if ($row) {
     <meta charset="UTF-8">
     <title>CopyForward Publishing (CFP)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?php echo cfp_url('assets/css/main.css'); ?>">
     <script src="/assets/js/main.js" defer></script>
 </head>
 <body class="cfp-shell">
@@ -71,17 +71,17 @@ if ($row) {
     <div class="cfp-header-inner">
         <div class="cfp-logo">CopyForward Publishing</div>
         <nav class="cfp-nav">
-            <a href="/index.php">Home</a>
-            <a href="/search.php">Search</a>
+            <a href="<?php echo cfp_url('index.php'); ?>">Home</a>
+            <a href="<?php echo cfp_url('search.php'); ?>">Search</a>
             <?php if (cfp_is_logged_in()): ?>
                 <?php if (cfp_current_role() === 'admin'): ?>
-                    <a href="/admin/members.php">Admin</a>
+                    <a href="<?php echo cfp_url('admin/members.php'); ?>">Admin</a>
                 <?php endif; ?>
                 <?php if (cfp_current_role() === 'author'): ?>
-                    <a href="/author/index.php">Author</a>
+                    <a href="<?php echo cfp_url('author/index.php'); ?>">Author</a>
                 <?php endif; ?>
-                <a href="/member/profile.php">Profile</a>
-                <a href="/member/messages.php">Messages</a>
+                <a href="<?php echo cfp_url('member/profile.php'); ?>">Profile</a>
+                <a href="<?php echo cfp_url('member/messages.php'); ?>">Messages</a>
             <?php endif; ?>
         </nav>
         <div style="font-size:0.8rem;">
@@ -89,11 +89,11 @@ if ($row) {
                 <?php $u = cfp_current_user(); ?>
                 <?php echo e($u['name']); ?> (<?php echo e(cfp_current_role() ?? ''); ?>)
                 &nbsp;·&nbsp;
-                <a href="/logout.php">Logout</a>
+                <a href="<?php echo cfp_url('logout.php'); ?>">Logout</a>
             <?php else: ?>
-                <a href="/login.php">Login</a>
+                <a href="<?php echo cfp_url('login.php'); ?>">Login</a>
                 &nbsp;·&nbsp;
-                <a href="/register.php">Register</a>
+                <a href="<?php echo cfp_url('register.php'); ?>">Register</a>
             <?php endif; ?>
         </div>
     </div>
@@ -128,8 +128,8 @@ if ($row) {
                                     <?php echo e(mb_strimwidth($item['description'] ?? '', 0, 120, '…')); ?>
                                 </p>
                                 <div style="display:flex; gap:0.5rem; margin-top:0.35rem;">
-                                    <a class="cfp-btn cfp-btn-outline" href="/item.php?id=<?php echo (int)$item['id']; ?>">View details</a>
-                                    <a class="cfp-btn cfp-btn-primary" href="/member/download.php?item_id=<?php echo (int)$item['id']; ?>">Download</a>
+                                    <a class="cfp-btn cfp-btn-outline" href="<?php echo cfp_url('item.php?id=' . (int)$item['id']); ?>">View details</a>
+                                    <a class="cfp-btn cfp-btn-primary" href="<?php echo cfp_url('member/download.php?item_id=' . (int)$item['id']); ?>">Download</a>
                                 </div>
                             </article>
                         <?php endforeach; ?>
@@ -137,9 +137,9 @@ if ($row) {
                 </div>
                 <p style="margin-top:0.75rem; font-size:0.85rem;">
                     Browse more:
-                    <a href="/items_new.php">New items</a> ·
-                    <a href="/items_popular.php">Popular items</a> ·
-                    <a href="/items_most_downloaded_titles.php">Most downloaded titles</a>
+                    <a href="<?php echo cfp_url('items_new.php'); ?>">New items</a> ·
+                    <a href="<?php echo cfp_url('items_popular.php'); ?>">Popular items</a> ·
+                    <a href="<?php echo cfp_url('items_most_downloaded_titles.php'); ?>">Most downloaded titles</a>
                 </p>
             </div>
 

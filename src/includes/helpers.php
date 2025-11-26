@@ -72,4 +72,14 @@ function e(string $value): string
     return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+/**
+ * Build an application-relative URL that works even when the site is served
+ * from a subdirectory (e.g. /cfp/src/public under MAMP).
+ */
+function cfp_url(string $path): string
+{
+    $base = defined('CFP_BASE_PATH') ? CFP_BASE_PATH : '/';
+    return $base . ltrim($path, '/');
+}
+
 
