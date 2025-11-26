@@ -1,49 +1,13 @@
-<<<<<<< Updated upstream
-=======
-placeholder
->>>>>>> Stashed changes
--- CFP Seed Data
--- Phase 2: initialization with realistic test data
-
--- NOTE:
---   This script assumes the `cfp` database and all tables from db/schema.sql
---   already exist. Typically you will run:
---     mysql -u root -p cfp < db/seed.sql
-
-USE cfp;
+-- CFP Sample Data
+-- Load this after running db/schema.sql and selecting the target database:
+--   mysql -u root -p cfp < db/sample_data.sql
+-- or
+--   mysql -u user -p your_db < db/sample_data.sql
+--
+-- This script does not truncate tables. Use db/seed.sql if you need a full reset.
 
 SET NAMES utf8mb4;
 SET time_zone = '+00:00';
-
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ---------------------------------------------------------------------------
--- Truncate tables (in no particular order with FK checks disabled)
--- ---------------------------------------------------------------------------
-
-TRUNCATE TABLE daily_author_stats;
-TRUNCATE TABLE daily_item_stats;
-TRUNCATE TABLE moderation_logs;
-TRUNCATE TABLE internal_messages;
-TRUNCATE TABLE comments;
-TRUNCATE TABLE votes;
-TRUNCATE TABLE discussions;
-TRUNCATE TABLE committee_members;
-TRUNCATE TABLE committees;
-TRUNCATE TABLE downloads;
-TRUNCATE TABLE donations;
-TRUNCATE TABLE charities;
-TRUNCATE TABLE item_versions;
-TRUNCATE TABLE items;
-TRUNCATE TABLE authors;
-TRUNCATE TABLE members;
-TRUNCATE TABLE vote_options;
-TRUNCATE TABLE discussion_statuses;
-TRUNCATE TABLE item_statuses;
-TRUNCATE TABLE member_statuses;
-TRUNCATE TABLE roles;
-
-SET FOREIGN_KEY_CHECKS = 1;
 
 -- ---------------------------------------------------------------------------
 -- Lookup data
@@ -81,9 +45,6 @@ INSERT INTO vote_options (id, code, description) VALUES
 -- ---------------------------------------------------------------------------
 -- Members and authors
 -- ---------------------------------------------------------------------------
-
--- For Phase 3 we will introduce real password hashes; for now, the
--- password_hash column holds a placeholder string 'changeme'.
 
 INSERT INTO members (
     id, introducer_id, name, org, address,
@@ -313,6 +274,6 @@ INSERT INTO daily_author_stats (stat_date, author_id, downloads_count, donations
   (DATE_SUB(CURDATE(), INTERVAL 1 DAY), 4, 8, 100.00),
   (DATE_SUB(CURDATE(), INTERVAL 1 DAY), 5, 2, 10.00);
 
--- End of seed data
+-- End of sample data
 
 

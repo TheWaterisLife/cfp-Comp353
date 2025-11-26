@@ -35,7 +35,11 @@ The project is implemented with modern, readable PHP (procedural or simple MVC),
 - `db/` — schema and seed SQL scripts
 - `src/` — PHP source (public webroot, includes, and role-specific modules)
 - `assets/` — CSS, JS, and images
+<<<<<<< Updated upstream
 - `docs/` — ERD, design notes, demo script, tests, reports, screenshots
+=======
+- `docs/` — ERD, design notes, demo script, glossary, assumptions, bug log, limitations, tests, reports
+>>>>>>> Stashed changes
 - `scripts/` — helper scripts (e.g., stats aggregation, packaging)
 
 ### Branching model
@@ -48,4 +52,9 @@ The project is implemented with modern, readable PHP (procedural or simple MVC),
 - See `INSTALL.md` for setup instructions.
 - See `docs/demo_script.md` for a suggested 25-minute walkthrough.
 - See `docs/design_notes.md` for schema and workflow details (including normalization and plagiarism handling).
+<<<<<<< Updated upstream
+=======
+- See `docs/glossary.md` and `docs/questions_assumptions.md` for domain clarification.
+- See `docs/bug_fixes.md` and `docs/known_limitations.md` for deployment caveats and talking points.
+>>>>>>> Stashed changes
 

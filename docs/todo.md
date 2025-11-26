@@ -5,13 +5,13 @@ This file acts as a lightweight issue tracker for environments without GitHub/Gi
 ### Global Checklist
 
 - [x] Phase 0 — Kickoff & repo scaffold
-- [ ] Phase 1 — Requirements → ERD → Relational schema
-- [ ] Phase 2 — Database initialization + seed data
-- [ ] Phase 3 — Basic backend & auth
-- [ ] Phase 4 — Frontend UI & UX
-- [ ] Phase 5 — Business workflows & anti-plagiarism process
-- [ ] Phase 6 — Statistics, reporting, and simulated email
-- [ ] Phase 7 — Testing, documentation, demo script & packaging
+- [x] Phase 1 — Requirements → ERD → Relational schema
+- [x] Phase 2 — Database initialization + seed data
+- [x] Phase 3 — Basic backend & auth
+- [x] Phase 4 — Frontend UI & UX
+- [x] Phase 5 — Business workflows & anti-plagiarism process
+- [x] Phase 6 — Statistics, reporting, and simulated email
+- [x] Phase 7 — Testing, documentation, demo script & packaging
 
 ### Phase 0 — Kickoff & Repo Scaffold
 
@@ -21,8 +21,9 @@ This file acts as a lightweight issue tracker for environments without GitHub/Gi
 - [x] Add `INSTALL.md` stub
 - [x] Create empty `db/schema.sql` and `db/seed.sql`
 - [x] Add `docs/design_notes.md` and `docs/demo_script.md` stubs
-- [x] Add `docs/ERD.png` placeholder
+- [x] Add `docs/ERD.png` placeholder (keep synced with `db/schema.sql`)
+- [x] Add supporting documentation: glossary, questions & assumptions, bug log, known limitations
 
-Update this checklist as future phases are implemented and tested.
+Update this checklist as future phases are implemented and tested. For post-phase-7 enhancements, track work items in this file or in `docs/bug_fixes.md`.
 
 
