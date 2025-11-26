@@ -8,6 +8,10 @@ $pdo = cfp_get_pdo();
 $user = cfp_current_user();
 $error = '';
 
+// Optional prefill from query string, e.g. when an author messages a commenter.
+$prefillToEmail = trim($_GET['to'] ?? '');
+$prefillSubject = trim($_GET['subject'] ?? '');
+
 // Handle send
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $toEmail = trim($_POST['to_email'] ?? '');
@@ -135,15 +139,17 @@ $sent = $sent->fetchAll();
                 <form method="post">
                     <label class="cfp-label">
                         To (email)
-                        <input class="cfp-input" type="email" name="to_email" required>
+                        <input class="cfp-input" type="email" name="to_email" required
+                               value="<?php echo e($_POST['to_email'] ?? $prefillToEmail); ?>">
                     </label>
                     <label class="cfp-label">
                         Subject
-                        <input class="cfp-input" type="text" name="subject" required>
+                        <input class="cfp-input" type="text" name="subject" required
+                               value="<?php echo e($_POST['subject'] ?? $prefillSubject); ?>">
                     </label>
                     <label class="cfp-label">
                         Message
-                        <textarea class="cfp-textarea" name="body" required></textarea>
+                        <textarea class="cfp-textarea" name="body" required><?php echo e($_POST['body'] ?? ''); ?></textarea>
                     </label>
                     <button class="cfp-btn cfp-btn-primary" type="submit" style="margin-top:0.7rem;">Send</button>
                 </form>

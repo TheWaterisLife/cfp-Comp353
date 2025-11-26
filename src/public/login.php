@@ -53,13 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" name="password" required>
         </label>
         <label>
-            Matrix code (optional for now)
-            <input type="text" name="matrix_code" placeholder="e.g. A1-B3">
+            Matrix code
+            <input type="text" name="matrix_code" placeholder="3-letter code from your matrix">
         </label>
         <button type="submit">Login</button>
     </form>
     <p class="hint">
         Demo users are loaded via <code>db/seed.sql</code> (e.g. <code>alice.admin@example.org</code>, password <code>changeme</code>).
+        When a verification matrix is configured for your account, enter the 3-letter code built from cells (row,column) (1,1), (2,2) and (3,3).
     </p>
     <p class="hint">
         No account? <a href="/register.php">Register</a>.

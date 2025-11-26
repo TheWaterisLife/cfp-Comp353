@@ -47,6 +47,17 @@ $monthlyStmt = $pdo->prepare('
 $monthlyStmt->execute(['year' => $year]);
 $monthly = $monthlyStmt->fetchAll();
 
+// Content growth: items created per month in the selected year
+$itemsCreatedStmt = $pdo->prepare('
+    SELECT MONTH(upload_date) AS month, COUNT(*) AS created
+    FROM items
+    WHERE YEAR(upload_date) = :year
+    GROUP BY MONTH(upload_date)
+    ORDER BY month
+');
+$itemsCreatedStmt->execute(['year' => $year]);
+$itemsCreated = $itemsCreatedStmt->fetchAll();
+
 // Annual donations by charity
 $donationStmt = $pdo->prepare('
     SELECT c.name, SUM(d.amount) AS total_amount
@@ -58,6 +69,19 @@ $donationStmt = $pdo->prepare('
 ');
 $donationStmt->execute(['year' => $year]);
 $donationsByCharity = $donationStmt->fetchAll();
+
+// Annual accesses by country (using simulated/stored country_code on downloads)
+$countryStmt = $pdo->prepare('
+    SELECT
+        IFNULL(d.country_code, "ZZ") AS country_code,
+        COUNT(*) AS downloads
+    FROM downloads d
+    WHERE YEAR(d.download_date) = :year
+    GROUP BY country_code
+    ORDER BY downloads DESC
+');
+$countryStmt->execute(['year' => $year]);
+$downloadsByCountry = $countryStmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -151,6 +175,26 @@ $donationsByCharity = $donationStmt->fetchAll();
                     </table>
                 </div>
                 <div>
+                    <h2 style="font-size:0.95rem;">Items created per month</h2>
+                    <table class="cfp-table">
+                        <thead><tr><th>Month</th><th>Items created</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($itemsCreated as $row): ?>
+                            <tr>
+                                <td><?php echo (int)$row['month']; ?></td>
+                                <td><?php echo (int)$row['created']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php if (!$itemsCreated): ?>
+                            <tr><td colspan="2" class="cfp-muted">No items were created in this year.</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="cfp-grid cfp-grid-2" style="margin-top:1.5rem;">
+                <div>
                     <h2 style="font-size:0.95rem;">Donations by charity</h2>
                     <table class="cfp-table">
                         <thead><tr><th>Charity</th><th>Total amount</th></tr></thead>
@@ -169,6 +213,27 @@ $donationsByCharity = $donationStmt->fetchAll();
                     <p style="margin-top:0.5rem; font-size:0.8rem;">
                         <a href="/admin/export_stats.php?type=donations&year=<?php echo (int)$year; ?>">Export CSV</a>
                     </p>
+                </div>
+                <div>
+                    <h2 style="font-size:0.95rem;">Annual access by country</h2>
+                    <p class="cfp-muted" style="font-size:0.8rem; margin-top:0.25rem;">
+                        Country codes are simulated from IP ranges for the assignment; in a production system,
+                        this would be powered by a GeoIP service.
+                    </p>
+                    <table class="cfp-table" style="margin-top:0.5rem; max-width:420px;">
+                        <thead><tr><th>Country</th><th>Downloads</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($downloadsByCountry as $row): ?>
+                            <tr>
+                                <td><?php echo e($row['country_code']); ?></td>
+                                <td><?php echo (int)$row['downloads']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php if (!$downloadsByCountry): ?>
+                            <tr><td colspan="2" class="cfp-muted">No download data for this year.</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>

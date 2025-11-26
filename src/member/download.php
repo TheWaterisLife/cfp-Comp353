@@ -53,16 +53,34 @@ if ($itemId <= 0) {
                 ? 'Daily download limit reached (1 per day for donors).'
                 : 'Weekly download limit reached (1 item per 7 days).';
         } else {
-            // Record the download
+            // Record the download, including simulated country code for statistics.
             $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+            // Simple placeholder mapping from IP to country; in a real system you would
+            // use GeoIP or another geolocation service. For the project we keep this
+            // deterministic but simple.
+            $country = 'ZZ'; // unknown / default
+            if ($ip) {
+                if (strpos($ip, '203.0.113.') === 0) {
+                    $country = 'US';
+                } elseif (strpos($ip, '198.51.100.') === 0) {
+                    $country = 'CA';
+                } elseif ($ip === '192.0.2.5') {
+                    $country = 'GB';
+                } elseif ($ip === '192.0.2.6') {
+                    $country = 'DE';
+                }
+            }
+
             $ins = $pdo->prepare('
-                INSERT INTO downloads (member_id, item_id, download_date, ip_address)
-                VALUES (:mid, :item_id, NOW(), :ip)
+                INSERT INTO downloads (member_id, item_id, download_date, ip_address, country_code)
+                VALUES (:mid, :item_id, NOW(), :ip, :country)
             ');
             $ins->execute([
                 'mid'     => $user['id'],
                 'item_id' => $itemId,
                 'ip'      => $ip,
+                'country' => $country,
             ]);
 
             // In a production environment, you would now stream the file to the user.

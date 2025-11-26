@@ -30,7 +30,8 @@ INSERT INTO item_statuses (id, code, description) VALUES
   (2, 'pending_review', 'Awaiting moderator review'),
   (3, 'approved', 'Approved and visible to members'),
   (4, 'rejected', 'Rejected by moderators'),
-  (5, 'blacklisted', 'Blacklisted due to plagiarism or policy');
+  (5, 'blacklisted', 'Blacklisted due to plagiarism or policy'),
+  (6, 'removed', 'Removed by author from public listings');
 
 INSERT INTO discussion_statuses (id, code, description) VALUES
   (1, 'open', 'Open for discussion and voting'),
@@ -111,26 +112,34 @@ INSERT INTO charities (id, name, details, website, created_at, updated_at) VALUE
 -- ---------------------------------------------------------------------------
 
 INSERT INTO items (
-    id, author_id, title, description, file_path,
+    id, author_id, title, description, topic, keywords, file_path,
     upload_date, status_id, version_parent_id
 ) VALUES
   (1, 4, 'Open Textbook on Algorithms',
    'An introductory textbook on algorithms under a copy-forward license.',
+   'Computer Science',
+   'algorithms, data structures, textbook, undergraduate',
    '/files/items/algorithms-v1.pdf',
    DATE_SUB(NOW(), INTERVAL 90 DAY), 3, NULL),
 
   (2, 4, 'Open Textbook on Algorithms (Revised)',
    'Revised edition with additional examples.',
+   'Computer Science',
+   'algorithms, graphs, sorting, revised edition',
    '/files/items/algorithms-v2.pdf',
    DATE_SUB(NOW(), INTERVAL 30 DAY), 3, 1),
 
   (3, 5, 'Digital Preservation Handbook',
    'Guidelines for long-term digital preservation.',
+   'Digital Preservation',
+   'preservation, archives, libraries, storage',
    '/files/items/preservation-v1.pdf',
    DATE_SUB(NOW(), INTERVAL 40 DAY), 2, NULL),
 
   (4, 6, 'Case Studies in Plagiarism',
    'Anonymized case studies used for committee training.',
+   'Ethics and Plagiarism',
+   'plagiarism, ethics, case studies, training',
    '/files/items/plagiarism-cases-v1.pdf',
    DATE_SUB(NOW(), INTERVAL 10 DAY), 5, NULL);
 
@@ -143,23 +152,23 @@ INSERT INTO item_versions (
   (4, 4, 1, '/files/items/plagiarism-cases-v1.pdf', 2, DATE_SUB(NOW(), INTERVAL 7 DAY));
 
 -- ---------------------------------------------------------------------------
--- Downloads (to demonstrate limits: donor vs non-donor)
+-- Downloads (to demonstrate limits: donor vs non-donor, with simulated country)
 -- ---------------------------------------------------------------------------
 
-INSERT INTO downloads (id, member_id, item_id, download_date, ip_address) VALUES
-  -- Mira Member: several downloads over the past 60 days
-  (1, 7, 1, DATE_SUB(NOW(), INTERVAL 60 DAY), '203.0.113.10'),
-  (2, 7, 2, DATE_SUB(NOW(), INTERVAL 15 DAY), '203.0.113.10'),
-  (3, 7, 2, DATE_SUB(NOW(), INTERVAL 6 DAY),  '203.0.113.10'),
+INSERT INTO downloads (id, member_id, item_id, download_date, ip_address, country_code) VALUES
+  -- Mira Member (simulated US): several downloads over the past 60 days
+  (1, 7, 1, DATE_SUB(NOW(), INTERVAL 60 DAY), '203.0.113.10', 'US'),
+  (2, 7, 2, DATE_SUB(NOW(), INTERVAL 15 DAY), '203.0.113.10', 'US'),
+  (3, 7, 2, DATE_SUB(NOW(), INTERVAL 6 DAY),  '203.0.113.10', 'US'),
 
-  -- Noah Member: frequent downloader, some within last 7 days
-  (4, 8, 1, DATE_SUB(NOW(), INTERVAL 3 DAY),  '198.51.100.20'),
-  (5, 8, 1, DATE_SUB(NOW(), INTERVAL 2 DAY),  '198.51.100.20'),
-  (6, 8, 2, DATE_SUB(NOW(), INTERVAL 1 DAY),  '198.51.100.20'),
+  -- Noah Member (simulated CA): frequent downloader, some within last 7 days
+  (4, 8, 1, DATE_SUB(NOW(), INTERVAL 3 DAY),  '198.51.100.20', 'CA'),
+  (5, 8, 1, DATE_SUB(NOW(), INTERVAL 2 DAY),  '198.51.100.20', 'CA'),
+  (6, 8, 2, DATE_SUB(NOW(), INTERVAL 1 DAY),  '198.51.100.20', 'CA'),
 
-  -- Authors downloading their own/other content
-  (7, 4, 1, DATE_SUB(NOW(), INTERVAL 20 DAY), '192.0.2.5'),
-  (8, 5, 3, DATE_SUB(NOW(), INTERVAL 5 DAY),  '192.0.2.6');
+  -- Authors downloading their own/other content (simulated GB/DE)
+  (7, 4, 1, DATE_SUB(NOW(), INTERVAL 20 DAY), '192.0.2.5', 'GB'),
+  (8, 5, 3, DATE_SUB(NOW(), INTERVAL 5 DAY),  '192.0.2.6', 'DE');
 
 -- ---------------------------------------------------------------------------
 -- Donations (used later for donor-based download rules)
@@ -195,6 +204,12 @@ INSERT INTO committee_members (committee_id, member_id, role, joined_on) VALUES
   (1, 4, 'member',   DATE_SUB(NOW(), INTERVAL 30 DAY)),
   (2, 3, 'chair',    DATE_SUB(NOW(), INTERVAL 30 DAY)),
   (2, 5, 'reviewer', DATE_SUB(NOW(), INTERVAL 30 DAY));
+
+-- Example pending committee request
+INSERT INTO committee_requests (
+    committee_id, member_id, status, requested_on, decided_on, decided_by, note
+) VALUES
+  (2, 7, 'pending', DATE_SUB(NOW(), INTERVAL 3 DAY), NULL, NULL, 'Interested in appeals process.');
 
 -- ---------------------------------------------------------------------------
 -- Discussions, votes, and comments

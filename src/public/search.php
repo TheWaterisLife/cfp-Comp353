@@ -15,7 +15,13 @@ if ($q !== '') {
         JOIN members m ON a.member_id = m.id
         JOIN item_statuses s ON i.status_id = s.id
         WHERE s.code = "approved"
-          AND (i.title LIKE :q OR i.description LIKE :q)
+          AND (
+              i.title LIKE :q
+              OR i.description LIKE :q
+              OR i.topic LIKE :q
+              OR i.keywords LIKE :q
+              OR m.name LIKE :q
+          )
         ORDER BY i.upload_date DESC
         LIMIT 30
     ');
@@ -58,7 +64,9 @@ if ($q !== '') {
     <div class="cfp-main-inner">
         <section class="cfp-panel">
             <h1 class="cfp-h1">Search</h1>
-            <p class="cfp-muted">Find approved items by title or description.</p>
+            <p class="cfp-muted">
+                Find approved items by <strong>title</strong>, <strong>topic</strong>, <strong>keywords</strong>, or <strong>author name</strong>.
+            </p>
 
             <form action="/search.php" method="get" style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
                 <input class="cfp-input" type="search" name="q" value="<?php echo e($q); ?>" placeholder="Search for algorithms, preservation, plagiarism…">

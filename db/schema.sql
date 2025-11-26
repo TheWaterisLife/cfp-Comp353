@@ -23,7 +23,7 @@ CREATE TABLE member_statuses (
 
 CREATE TABLE item_statuses (
     id           TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    code         VARCHAR(32) NOT NULL UNIQUE,   -- draft, pending_review, approved, rejected, blacklisted
+    code         VARCHAR(32) NOT NULL UNIQUE,   -- draft, pending_review, approved, rejected, blacklisted, removed
     description  VARCHAR(255) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -91,6 +91,8 @@ CREATE TABLE items (
     author_id          INT UNSIGNED NOT NULL,   -- references authors.member_id
     title              VARCHAR(255) NOT NULL,
     description        TEXT NULL,
+    topic              VARCHAR(255) NULL,
+    keywords           VARCHAR(512) NULL,       -- comma-separated keywords for simple search
     file_path          VARCHAR(255) NOT NULL,
     upload_date        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status_id          TINYINT UNSIGNED NOT NULL,
@@ -177,6 +179,7 @@ CREATE TABLE downloads (
     item_id        INT UNSIGNED NOT NULL,
     download_date  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ip_address     VARCHAR(45) NULL,
+    country_code   CHAR(2) NULL,
 
     CONSTRAINT fk_downloads_member
         FOREIGN KEY (member_id) REFERENCES members(id)
@@ -188,6 +191,7 @@ CREATE TABLE downloads (
 
 CREATE INDEX idx_downloads_member_date ON downloads(member_id, download_date);
 CREATE INDEX idx_downloads_item_date ON downloads(item_id, download_date);
+CREATE INDEX idx_downloads_country_year ON downloads(country_code, download_date);
 
 -- ---------------------------------------------------------------------------
 -- Committees, discussions, votes, comments
@@ -214,6 +218,28 @@ CREATE TABLE committee_members (
     CONSTRAINT fk_committee_members_member
         FOREIGN KEY (member_id) REFERENCES members(id)
         ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE committee_requests (
+    id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    committee_id   INT UNSIGNED NOT NULL,
+    member_id      INT UNSIGNED NOT NULL,
+    status         VARCHAR(16) NOT NULL DEFAULT 'pending', -- pending, approved, denied
+    requested_on   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    decided_on     DATETIME NULL,
+    decided_by     INT UNSIGNED NULL,
+    note           VARCHAR(255) NULL,
+
+    CONSTRAINT fk_committee_requests_committee
+        FOREIGN KEY (committee_id) REFERENCES committees(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_committee_requests_member
+        FOREIGN KEY (member_id) REFERENCES members(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_committee_requests_decided_by
+        FOREIGN KEY (decided_by) REFERENCES members(id)
+        ON DELETE SET NULL,
+    CONSTRAINT uq_committee_requests UNIQUE (committee_id, member_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE discussions (
@@ -263,21 +289,26 @@ CREATE TABLE votes (
 CREATE INDEX idx_votes_discussion ON votes(discussion_id);
 
 CREATE TABLE comments (
-    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    item_id     INT UNSIGNED NOT NULL,
-    author_id   INT UNSIGNED NOT NULL,       -- member id
-    content     TEXT NOT NULL,
-    created_on  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id                INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    item_id           INT UNSIGNED NOT NULL,
+    author_id         INT UNSIGNED NOT NULL,       -- member id
+    parent_comment_id INT UNSIGNED NULL,           -- for public replies / threading
+    content           TEXT NOT NULL,
+    created_on        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_comments_item
         FOREIGN KEY (item_id) REFERENCES items(id)
         ON DELETE CASCADE,
     CONSTRAINT fk_comments_author
         FOREIGN KEY (author_id) REFERENCES members(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_comments_parent
+        FOREIGN KEY (parent_comment_id) REFERENCES comments(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX idx_comments_item ON comments(item_id);
+CREATE INDEX idx_comments_parent ON comments(parent_comment_id);
 
 -- ---------------------------------------------------------------------------
 -- Internal messaging and moderation logs

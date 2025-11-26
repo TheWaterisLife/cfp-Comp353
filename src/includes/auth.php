@@ -10,8 +10,9 @@ if (session_status() === PHP_SESSION_NONE) {
 /**
  * Attempt to authenticate a user by email + password + optional matrix code.
  *
- * NOTE: For Phase 3 we still use placeholder hashes ('changeme'); later phases
- * should replace this with password_hash / password_verify.
+ * Passwords are stored using password_hash(); this function uses
+ * password_verify() and also supports upgrading legacy plain-text passwords
+ * that may exist from older seed data.
  *
  * @return bool true on success, false on failure
  */
@@ -38,13 +39,41 @@ function cfp_login(string $email, string $password, ?string $matrixCode = null):
         return false;
     }
 
-    // TODO: Replace with password_verify in a later phase.
-    if ($member['password_hash'] !== $password) {
+    $storedPassword = (string)($member['password_hash'] ?? '');
+
+    // Prefer secure password_verify() for hashed passwords.
+    $info = password_get_info($storedPassword);
+    $isHashed = ($info['algo'] ?? 0) !== 0;
+
+    $validPassword = false;
+
+    if ($isHashed) {
+        $validPassword = password_verify($password, $storedPassword);
+    } else {
+        // Backwards-compatibility for any legacy plain-text passwords
+        // (e.g., from old sample_data); if it matches, upgrade in-place.
+        if (hash_equals($storedPassword, $password)) {
+            $validPassword = true;
+
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            $update = $pdo->prepare('UPDATE members SET password_hash = :hash WHERE id = :id');
+            $update->execute([
+                'hash' => $newHash,
+                'id'   => $member['id'],
+            ]);
+
+            $storedPassword = $newHash;
+        }
+    }
+
+    if (!$validPassword) {
         return false;
     }
 
-    // Simple matrix check placeholder: if auth_matrix is set and not expired,
-    // require a non-empty matrix code that matches a fixed value.
+    // Matrix-based second factor: if a matrix is set and not expired, require
+    // a code derived from the stored matrix. For backwards compatibility with
+    // legacy seed data (where auth_matrix is a plain string), we skip this
+    // check when the stored value is not valid JSON.
     if (!empty($member['auth_matrix']) && $member['matrix_expiry'] !== null) {
         $expiry = strtotime($member['matrix_expiry']);
         if ($expiry !== false && $expiry < time()) {
@@ -52,21 +81,46 @@ function cfp_login(string $email, string $password, ?string $matrixCode = null):
             return false;
         }
 
-        if ($matrixCode === null || $matrixCode === '') {
+        // Require a matrix code when a valid matrix is configured.
+        if ($matrixCode === null || trim($matrixCode) === '') {
             return false;
         }
 
-        // For now, accept any non-empty code; real logic can parse auth_matrix.
+        $matrixData = json_decode($member['auth_matrix'], true);
+
+        // If auth_matrix is not valid JSON, treat it as legacy and skip
+        // matrix verification to keep existing demo users working.
+        if (is_array($matrixData) && isset($matrixData['grid']) && is_array($matrixData['grid'])) {
+            $expected = '';
+            $grid = $matrixData['grid'];
+
+            // Fixed coordinates for Phase 6: (row, col) = (0,0), (1,1), (2,2)
+            $coords = [[0, 0], [1, 1], [2, 2]];
+            foreach ($coords as $coord) {
+                $r = $coord[0];
+                $c = $coord[1];
+                if (isset($grid[$r][$c])) {
+                    $expected .= (string)$grid[$r][$c];
+                }
+            }
+
+            $expected = strtoupper($expected);
+            $provided = strtoupper(trim($matrixCode));
+
+            if ($expected === '' || !hash_equals($expected, $provided)) {
+                return false;
+            }
+        }
     }
 
     $_SESSION['member'] = [
-        'id'         => $member['id'],
-        'name'       => $member['name'],
-        'email'      => $member['primary_email'],
-        'role_id'    => $member['role_id'],
-        'role_code'  => $member['role_code'],
-        'status_id'  => $member['status_id'],
-        'status_code'=> $member['status_code'],
+        'id'          => $member['id'],
+        'name'        => $member['name'],
+        'email'       => $member['primary_email'],
+        'role_id'     => $member['role_id'],
+        'role_code'   => $member['role_code'],
+        'status_id'   => $member['status_id'],
+        'status_code' => $member['status_code'],
     ];
 
     return true;
@@ -89,14 +143,39 @@ function cfp_logout(): void
 }
 
 /**
- * Stub for generating an authentication matrix on registration.
+ * Generate an authentication matrix for a member.
  *
- * For now this returns a simple string; later phases can encode structured
- * matrix data (e.g., JSON).
+ * We store a small character matrix as JSON in members.auth_matrix. The
+ * structure is:
+ *   {
+ *     "rows": 4,
+ *     "cols": 4,
+ *     "grid": [["A","B",...], ...]
+ *   }
+ *
+ * For Phase 6 we keep the usage simple: during login we derive a short
+ * verification code from fixed coordinates in this grid.
  */
 function cfp_generate_auth_matrix(): string
 {
-    return 'matrix-' . bin2hex(random_bytes(4));
+    $rows = 4;
+    $cols = 4;
+    $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // avoid ambiguous chars
+    $grid = [];
+
+    for ($r = 0; $r < $rows; $r++) {
+        $row = [];
+        for ($c = 0; $c < $cols; $c++) {
+            $row[] = $alphabet[random_int(0, strlen($alphabet) - 1)];
+        }
+        $grid[] = $row;
+    }
+
+    return json_encode([
+        'rows' => $rows,
+        'cols' => $cols,
+        'grid' => $grid,
+    ]);
 }
 
 
