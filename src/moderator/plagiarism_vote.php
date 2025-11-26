@@ -14,9 +14,13 @@ $message = '';
 
 // Fetch discussion and related item
 $discussionStmt = $pdo->prepare('
-    SELECT d.*, i.author_id, i.id AS item_id, i.title AS item_title
+    SELECT d.*, i.author_id, i.id AS item_id, i.title AS item_title,
+           i.status_id AS item_status_id, s.code AS item_status_code,
+           c.name AS committee_name
     FROM discussions d
     JOIN items i ON d.item_id = i.id
+    JOIN item_statuses s ON i.status_id = s.id
+    JOIN committees c ON d.committee_id = c.id
     WHERE d.id = :id
 ');
 $discussionStmt->execute(['id' => $discussionId]);
@@ -107,83 +111,185 @@ if ($totalNonAbstain > 0) {
     }
 }
 
+// Determine committee type and current item state
+$committeeName = $discussion['committee_name'] ?? '';
+$isAppealsCommittee = stripos($committeeName, 'appeal') !== false;
+$itemStatusCode = $discussion['item_status_code'] ?? '';
+$isCurrentlyBlacklisted = $itemStatusCode === 'blacklisted';
+
 // Apply automatic actions on 2/3 majority (blacklist) or appeal reversal
-if ($decision === 'blacklist') {
+if ($decision === 'blacklist' && !$isCurrentlyBlacklisted) {
     $pdo->beginTransaction();
+    try {
+        // Set item status to blacklisted
+        $statusStmt = $pdo->prepare('SELECT id FROM item_statuses WHERE code = "blacklisted"');
+        $statusStmt->execute();
+        $blacklistedStatusId = $statusStmt->fetchColumn();
 
-    // Set item status to blacklisted
-    $statusStmt = $pdo->prepare('SELECT id FROM item_statuses WHERE code = "blacklisted"');
-    $statusStmt->execute();
-    $blacklistedStatusId = $statusStmt->fetchColumn();
+        if ($blacklistedStatusId) {
+            $pdo->prepare('UPDATE items SET status_id = :sid WHERE id = :id')
+                ->execute(['sid' => $blacklistedStatusId, 'id' => $discussion['item_id']]);
 
-    if ($blacklistedStatusId) {
-        $pdo->prepare('UPDATE items SET status_id = :sid WHERE id = :id')
-            ->execute(['sid' => $blacklistedStatusId, 'id' => $discussion['item_id']]);
+            // Log moderation action
+            $pdo->prepare('
+                INSERT INTO moderation_logs (moderator_id, item_id, member_id, action, details, created_on)
+                VALUES (:mid, :item_id, :member_id, "blacklist_item", "2/3 majority vote reached", NOW())
+            ')->execute([
+                'mid'       => $user['id'],
+                'item_id'   => $discussion['item_id'],
+                'member_id' => $discussion['author_id'],
+            ]);
 
-        // Log moderation action
-        $pdo->prepare('
-            INSERT INTO moderation_logs (moderator_id, item_id, member_id, action, details, created_on)
-            VALUES (:mid, :item_id, :member_id, "blacklist_item", "2/3 majority vote reached", NOW())
-        ')->execute([
-            'mid'       => $user['id'],
-            'item_id'   => $discussion['item_id'],
-            'member_id' => $discussion['author_id'],
-        ]);
+            // Notify author
+            $pdo->prepare('
+                INSERT INTO internal_messages (from_member, to_member, subject, body, is_private, is_read, sent_on)
+                VALUES (:from, :to, :subject, :body, 1, 0, NOW())
+            ')->execute([
+                'from'    => $user['id'],
+                'to'      => $discussion['author_id'],
+                'subject' => 'Your item has been blacklisted',
+                'body'    => 'The committee has voted to blacklist your item "' . $discussion['item_title'] . '".',
+            ]);
 
-        // Notify author
-        $pdo->prepare('
-            INSERT INTO internal_messages (from_member, to_member, subject, body, is_private, is_read, sent_on)
-            VALUES (:from, :to, :subject, :body, 1, 0, NOW())
-        ')->execute([
-            'from'    => $user['id'],
-            'to'      => $discussion['author_id'],
-            'subject' => 'Your item has been blacklisted',
-            'body'    => 'The committee has voted to blacklist your item "' . $discussion['item_title'] . '".',
-        ]);
+            // Check if author has 3 or more blacklisted items
+            $countStmt = $pdo->prepare('
+                SELECT COUNT(*) FROM items i
+                JOIN item_statuses s ON i.status_id = s.id
+                WHERE i.author_id = :aid AND s.code = "blacklisted"
+            ');
+            $countStmt->execute(['aid' => $discussion['author_id']]);
+            $blacklistedCount = (int)$countStmt->fetchColumn();
 
-        // Check if author has 3 or more blacklisted items
-        $countStmt = $pdo->prepare('
-            SELECT COUNT(*) FROM items i
-            JOIN item_statuses s ON i.status_id = s.id
-            WHERE i.author_id = :aid AND s.code = "blacklisted"
-        ');
-        $countStmt->execute(['aid' => $discussion['author_id']]);
-        $blacklistedCount = (int)$countStmt->fetchColumn();
+            if ($blacklistedCount >= 3) {
+                // Suspend author account
+                $statusMemberStmt = $pdo->prepare('SELECT id FROM member_statuses WHERE code = "suspended"');
+                $statusMemberStmt->execute();
+                $suspendedStatusId = $statusMemberStmt->fetchColumn();
 
-        if ($blacklistedCount >= 3) {
-            // Suspend author account
-            $statusMemberStmt = $pdo->prepare('SELECT id FROM member_statuses WHERE code = "suspended"');
-            $statusMemberStmt->execute();
-            $suspendedStatusId = $statusMemberStmt->fetchColumn();
+                if ($suspendedStatusId) {
+                    $pdo->prepare('UPDATE members SET status_id = :sid WHERE id = :id')
+                        ->execute(['sid' => $suspendedStatusId, 'id' => $discussion['author_id']]);
 
-            if ($suspendedStatusId) {
-                $pdo->prepare('UPDATE members SET status_id = :sid WHERE id = :id')
-                    ->execute(['sid' => $suspendedStatusId, 'id' => $discussion['author_id']]);
+                    // Log suspension
+                    $pdo->prepare('
+                        INSERT INTO moderation_logs (moderator_id, item_id, member_id, action, details, created_on)
+                        VALUES (:mid, NULL, :member_id, "suspend_author", "Author reached 3 blacklisted items", NOW())
+                    ')->execute([
+                        'mid'       => $user['id'],
+                        'member_id' => $discussion['author_id'],
+                    ]);
 
-                // Log suspension
-                $pdo->prepare('
-                    INSERT INTO moderation_logs (moderator_id, item_id, member_id, action, details, created_on)
-                    VALUES (:mid, NULL, :member_id, "suspend_author", "Author reached 3 blacklisted items", NOW())
-                ')->execute([
-                    'mid'       => $user['id'],
-                    'member_id' => $discussion['author_id'],
-                ]);
-
-                // Notify author
-                $pdo->prepare('
-                    INSERT INTO internal_messages (from_member, to_member, subject, body, is_private, is_read, sent_on)
-                    VALUES (:from, :to, :subject, :body, 1, 0, NOW())
-                ')->execute([
-                    'from'    => $user['id'],
-                    'to'      => $discussion['author_id'],
-                    'subject' => 'Your author account has been suspended',
-                    'body'    => 'Your account has been suspended due to 3 or more blacklisted items.',
-                ]);
+                    // Notify author
+                    $pdo->prepare('
+                        INSERT INTO internal_messages (from_member, to_member, subject, body, is_private, is_read, sent_on)
+                        VALUES (:from, :to, :subject, :body, 1, 0, NOW())
+                    ')->execute([
+                        'from'    => $user['id'],
+                        'to'      => $discussion['author_id'],
+                        'subject' => 'Your author account has been suspended',
+                        'body'    => 'Your account has been suspended due to 3 or more blacklisted items.',
+                    ]);
+                }
             }
         }
-    }
 
-    $pdo->commit();
+        $pdo->commit();
+        $isCurrentlyBlacklisted = true;
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+
+if ($isAppealsCommittee && $decision === 'no_blacklist' && $isCurrentlyBlacklisted) {
+    $pdo->beginTransaction();
+    try {
+        // Reinstate item to approved status
+        $approvedStatusStmt = $pdo->prepare('SELECT id FROM item_statuses WHERE code = "approved"');
+        $approvedStatusStmt->execute();
+        $approvedStatusId = $approvedStatusStmt->fetchColumn();
+
+        if ($approvedStatusId) {
+            $pdo->prepare('UPDATE items SET status_id = :sid WHERE id = :id')
+                ->execute(['sid' => $approvedStatusId, 'id' => $discussion['item_id']]);
+
+            // Log reinstatement
+            $pdo->prepare('
+                INSERT INTO moderation_logs (moderator_id, item_id, member_id, action, details, created_on)
+                VALUES (:mid, :item_id, :member_id, "reinstate_item", "Appeals committee overturned blacklist", NOW())
+            ')->execute([
+                'mid'       => $user['id'],
+                'item_id'   => $discussion['item_id'],
+                'member_id' => $discussion['author_id'],
+            ]);
+
+            // Notify author
+            $pdo->prepare('
+                INSERT INTO internal_messages (from_member, to_member, subject, body, is_private, is_read, sent_on)
+                VALUES (:from, :to, :subject, :body, 1, 0, NOW())
+            ')->execute([
+                'from'    => $user['id'],
+                'to'      => $discussion['author_id'],
+                'subject' => 'Your item has been reinstated',
+                'body'    => 'The appeals committee voted to reinstate your item "' . $discussion['item_title'] . '".',
+            ]);
+
+            // Re-check blacklisted count and unsuspend if applicable
+            $countStmt = $pdo->prepare('
+                SELECT COUNT(*) FROM items i
+                JOIN item_statuses s ON i.status_id = s.id
+                WHERE i.author_id = :aid AND s.code = "blacklisted"
+            ');
+            $countStmt->execute(['aid' => $discussion['author_id']]);
+            $remainingBlacklisted = (int)$countStmt->fetchColumn();
+
+            if ($remainingBlacklisted < 3) {
+                $memberStatusStmt = $pdo->prepare('
+                    SELECT m.status_id, s.code
+                    FROM members m
+                    JOIN member_statuses s ON m.status_id = s.id
+                    WHERE m.id = :id
+                ');
+                $memberStatusStmt->execute(['id' => $discussion['author_id']]);
+                $statusRow = $memberStatusStmt->fetch();
+
+                if (($statusRow['code'] ?? '') === 'suspended') {
+                    $activeStatusStmt = $pdo->prepare('SELECT id FROM member_statuses WHERE code = "active"');
+                    $activeStatusStmt->execute();
+                    $activeStatusId = $activeStatusStmt->fetchColumn();
+
+                    if ($activeStatusId) {
+                        $pdo->prepare('UPDATE members SET status_id = :sid WHERE id = :id')
+                            ->execute(['sid' => $activeStatusId, 'id' => $discussion['author_id']]);
+
+                        $pdo->prepare('
+                            INSERT INTO moderation_logs (moderator_id, item_id, member_id, action, details, created_on)
+                            VALUES (:mid, NULL, :member_id, "reinstate_author", "Appeals committee reduced blacklist count", NOW())
+                        ')->execute([
+                            'mid'       => $user['id'],
+                            'member_id' => $discussion['author_id'],
+                        ]);
+
+                        $pdo->prepare('
+                            INSERT INTO internal_messages (from_member, to_member, subject, body, is_private, is_read, sent_on)
+                            VALUES (:from, :to, :subject, :body, 1, 0, NOW())
+                        ')->execute([
+                            'from'    => $user['id'],
+                            'to'      => $discussion['author_id'],
+                            'subject' => 'Your suspension has been lifted',
+                            'body'    => 'Following the appeals decision, your author account is active again.',
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $pdo->commit();
+        $isCurrentlyBlacklisted = false;
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
 }
 
 ?>

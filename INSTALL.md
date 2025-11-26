@@ -26,21 +26,23 @@
    FLUSH PRIVILEGES;
    ```
 
-3. **Load schema and seed data** (using the reset script for convenience):
+3. **Load schema and demo data** (choose the approach that fits your environment):
 
    ```bash
-   # from the project root
+   # a) Full drop/recreate:
    mysql -u root -p < db/reset.sql
+
+   # b) Manual sequence (fresh database):
+   mysql -u root -p cfp < db/schema.sql
+   mysql -u root -p cfp < db/sample_data.sql
+
+   # c) Reset existing tables without dropping the DB:
+   mysql -u root -p cfp < db/seed.sql
    ```
 
-   Or, to run manually:
+   See `docs/db_initialization.md` for more context and ENCS-specific examples.
 
-   ```bash
-   mysql -u root -p < db/schema.sql
-   mysql -u root -p < db/seed.sql
-   ```
-
-4. **Configure Apache** to point the webroot to `src/public/` and ensure PHP is enabled.
+4. **Configure Apache** to point the webroot to `src/public/` and ensure PHP is enabled. Requests such as `/admin/members.php` or `/member/download.php` are now served through lightweight wrappers under `src/public/`, so no extra aliases/symlinks are required—just keep the document root on `src/public`.
 
 5. **Configure database credentials** in `src/includes/db.php`:
 

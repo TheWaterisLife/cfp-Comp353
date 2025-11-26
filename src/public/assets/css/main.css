@@ -1,0 +1,257 @@
+/* CFP main stylesheet - Phase 4 UI */
+
+:root {
+    --cfp-bg: #020617;
+    --cfp-bg-panel: #020617;
+    --cfp-border: rgba(148, 163, 184, 0.4);
+    --cfp-text: #e5e7eb;
+    --cfp-muted: #9ca3af;
+    --cfp-accent: #38bdf8;
+    --cfp-accent-soft: #0ea5e9;
+    --cfp-success: #22c55e;
+    --cfp-danger: #ef4444;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, #0f172a, #020617 55%);
+    color: var(--cfp-text);
+}
+
+a {
+    color: #7dd3fc;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.cfp-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.cfp-header {
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.cfp-header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cfp-logo {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.cfp-nav {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+
+.cfp-main {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.cfp-main-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.cfp-panel {
+    background: var(--cfp-bg-panel);
+    border-radius: 0.85rem;
+    border: 1px solid var(--cfp-border);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    padding: 1.5rem;
+}
+
+.cfp-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.cfp-grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.cfp-h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.6rem;
+}
+
+.cfp-muted {
+    color: var(--cfp-muted);
+    font-size: 0.88rem;
+}
+
+.cfp-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+.cfp-badge-pill {
+    background: rgba(56, 189, 248, 0.16);
+    color: #7dd3fc;
+}
+
+.cfp-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+}
+
+.cfp-list li + li {
+    margin-top: 0.4rem;
+}
+
+.cfp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.cfp-btn-primary {
+    background: var(--cfp-accent);
+    color: #0f172a;
+}
+
+.cfp-btn-primary:hover {
+    background: var(--cfp-accent-soft);
+}
+
+.cfp-btn-outline {
+    background: transparent;
+    color: #e5e7eb;
+    border: 1px solid var(--cfp-border);
+}
+
+.cfp-input,
+.cfp-select,
+.cfp-textarea {
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.45rem;
+    border: 1px solid var(--cfp-border);
+    background: #020617;
+    color: var(--cfp-text);
+    font-size: 0.9rem;
+}
+
+.cfp-textarea {
+    min-height: 90px;
+}
+
+.cfp-label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--cfp-muted);
+    margin-top: 0.75rem;
+}
+
+.cfp-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.4rem;
+}
+
+.cfp-tag {
+    padding: 0.15rem 0.55rem;
+    font-size: 0.7rem;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.cfp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+}
+
+.cfp-table th,
+.cfp-table td {
+    padding: 0.45rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    text-align: left;
+}
+
+.cfp-table th {
+    font-weight: 500;
+    color: var(--cfp-muted);
+}
+
+.cfp-chip-success {
+    color: #bbf7d0;
+}
+
+.cfp-chip-danger {
+    color: #fecaca;
+}
+
+.cfp-alert {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 0.45rem;
+}
+
+.cfp-alert-error {
+    background: rgba(248, 113, 113, 0.09);
+    border: 1px solid rgba(248, 113, 113, 0.5);
+    color: #fecaca;
+}
+
+.cfp-alert-success {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.5);
+    color: #bbf7d0;
+}
+
+@media (max-width: 640px) {
+    .cfp-header {
+        padding-inline: 1rem;
+    }
+    .cfp-main {
+        padding-inline: 1rem;
+    }
+}
+
+

@@ -36,4 +36,14 @@ These notes describe how to exercise the plagiarism workflow and automatic suspe
    - A `moderation_logs` row is created with `action = 'suspend_author'`.
    - An internal message is sent informing the author of the suspension.
 
+### 5. Appeals and reinstatement
+
+1. Open the seeded appeals discussion (`/moderator/plagiarism_vote.php?discussion_id=2`) or create a new discussion under the Appeals Committee (committee_id = 2).
+2. Cast votes such that ≤ 1/3 of non-abstain votes are “yes” (e.g., one `no`, one `abstain`).
+3. Expected outcomes:
+   - The associated item’s status changes from `blacklisted` back to `approved`.
+   - A `moderation_logs` entry with `action = 'reinstate_item'` is created.
+   - The author receives an internal message stating that the item was reinstated.
+   - If the author’s remaining blacklisted count drops below three and they were suspended, the system sets their member status back to `active`, logs `reinstate_author`, and sends a suspension-lift message.
+
 

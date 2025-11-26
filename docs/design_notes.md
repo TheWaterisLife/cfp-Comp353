@@ -109,8 +109,8 @@ When a 2/3 majority is reached in favour of blacklisting:
 ### Appeal Process (Conceptual)
 
 - The schema includes an `Appeals Committee` (committee_id = 2 in the seed data) intended to handle appeals from authors whose items were blacklisted.
-- A follow‑up plagiarism appeal can be represented as a new `discussions` row for the appeals committee pointing to the same item. The same voting and 2/3‑majority logic can be reused to decide whether to uphold or overturn the blacklist.
-- For simplicity in this prototype, reinstatement logic (changing `blacklisted` back to `approved` and potentially unsuspending authors) can be added in a later refinement of `plagiarism_vote.php` or a dedicated appeal handler.
+- A follow‑up plagiarism appeal is represented as a new `discussions` row for the appeals committee pointing to the same item. The same voting and 2/3‑majority logic is reused to decide whether to uphold or overturn the blacklist.
+- When the appeals committee reaches a ≤ 1/3 yes ratio, `src/moderator/plagiarism_vote.php` now automatically reinstates the item to `approved`, logs the action, notifies the author, and lifts any suspension if the number of blacklisted items drops below three.
 
 ### Simplifications and Limitations
 

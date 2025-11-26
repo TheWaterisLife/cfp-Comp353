@@ -11,7 +11,7 @@ Summary of constraints to mention during demos and in the final report.
 7. **Single-author items** – Co-authorship is not modeled; extending the schema to `item_authors` is future work.
 8. **Limited testing automation** – Test notes are manual; there are no PHPUnit or Cypress suites.
 9. **Accessibility pass pending** – UI is keyboard-friendly but lacks full WCAG/ARIA verification.
-10. **Appeals workflow stubbed** – Appeals committee process is described in `design_notes.md` but not functionally wired.
+10. **Appeals workflow minimal** – Appeals committee can reinstate items/unsuspend authors, but there is no dedicated UI for multi-step appeals or notes beyond the existing discussion/vote pages.
 
 Document additional limitations here so stakeholders have clear expectations.
 
