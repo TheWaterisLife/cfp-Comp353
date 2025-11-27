@@ -36,7 +36,9 @@ if (!defined('CFP_BASE_PATH')) {
     if ($pos !== false) {
         $base = substr($scriptDir, 0, $pos + strlen('/public'));
     } else {
-        $base = $scriptDir;
+        // When the document root is already the public directory (e.g. MAMP
+        // pointing directly at src/public), use the web root as base.
+        $base = '/';
     }
     define('CFP_BASE_PATH', rtrim($base, '/') . '/');
 }
