@@ -14,8 +14,8 @@
 
 const DB_HOST = 'localhost';
 const DB_NAME = 'cfp';
-const DB_USER = 'cfp_user';   // TODO: change in your local setup
-const DB_PASS = 'CHANGE_ME';  // TODO: change in your local setup
+const DB_USER = 'root';   // TODO: change in your local setup
+const DB_PASS = 'root';  // TODO: change in your local setup
 
 /**
  * Returns a shared PDO instance for the CFP application.
