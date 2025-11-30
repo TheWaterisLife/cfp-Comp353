@@ -1,3 +1,5 @@
+// Author: Zaree Choudhry Hameed (21026488)
+
 // CFP main JS - Phase 4
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,3 +1,5 @@
+-- Author: Adam Mohammed Dahmane (40251506)
+
 -- CFP Database Reset Script
 -- Drops and recreates the `cfp` database, then loads schema and seed data.
 --

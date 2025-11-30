@@ -1,4 +1,6 @@
 <?php
+// Author: Samy Belmihoub (40251504)
+
 require_once __DIR__ . '/bootstrap.php';
 
 $pdo = cfp_get_pdo();

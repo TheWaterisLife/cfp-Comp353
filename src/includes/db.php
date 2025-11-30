@@ -1,10 +1,7 @@
 <?php
+// Author: Samy Belmihoub (40251504)
 
 /**
- * CFP database connection helper (PDO).
- *
- * Configure the constants below to match your local environment.
- * Example values (see INSTALL.md):
  *
  *   DB_HOST = 'localhost';
  *   DB_NAME = 'cfp';

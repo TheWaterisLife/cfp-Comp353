@@ -1,4 +1,5 @@
 <?php
+// Author: Samy Belmihoub (40251504)
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/helpers.php';

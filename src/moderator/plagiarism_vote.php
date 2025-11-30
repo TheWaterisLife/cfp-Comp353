@@ -1,4 +1,6 @@
 <?php
+// Author: Zaree Choudhry Hameed (21026488)
+
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/db.php';

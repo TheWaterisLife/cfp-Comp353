@@ -1,3 +1,5 @@
+-- Author: Adam Mohammed Dahmane (40251506)
+
 -- CFP Database Schema
 -- Phase 1: ERD → Relational schema
 -- Target: MariaDB / MySQL

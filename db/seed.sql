@@ -1,3 +1,5 @@
+-- Author: Adam Mohammed Dahmane (40251506)
+
 -- CFP Seed Data (reset + sample content)
 -- Phase 2: initialization with realistic test data
 --

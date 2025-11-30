@@ -1,3 +1,5 @@
+-- Author: Adam Mohammed Dahmane (40251506)
+
 -- CFP Sample Data
 -- Load this after running db/schema.sql and selecting the target database:
 --   mysql -u root -p cfp < db/sample_data.sql

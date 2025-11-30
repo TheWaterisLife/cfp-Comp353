@@ -1,4 +1,5 @@
 <?php
+// Author: Samy Belmihoub (40251504)
 
 /**
  * Common helper functions for CFP.

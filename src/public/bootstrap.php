@@ -1,4 +1,5 @@
 <?php
+// Author: Samy Belmihoub (40251504)
 
 /**
  * Bootstraps public entrypoints by locating the shared includes directory

@@ -1,4 +1,5 @@
 <?php
+// Author: Samy Belmihoub (40251504)
 
 // CLI script to aggregate daily statistics into summary tables.
 //
